@@ -14,13 +14,13 @@ function binarySearch<T extends { name: string }>(list: T[], nameToSearch: T["na
     return null;
 }
 
-const exapleArray = [{ name: "AAAA", id: 1 }, { name: "BBBB", id: 8 }, { name: "MMMM", id: 9 }, { name: "YYYY", id: 10 }, { name: "CCCC", id: 3 }];
+const exampleArray = [{ name: "AAAA", id: 1 }, { name: "BBBB", id: 8 }, { name: "MMMM", id: 9 }, { name: "YYYY", id: 10 }, { name: "CCCC", id: 3 }];
 
 function sortByName<T extends { name: string }>(a: T, b: T) {
     return a.name > b.name ? 1 : -1
 }
 
-const sortedArray = exapleArray.sort(sortByName);
+const sortedArray = exampleArray.sort(sortByName);
 
 const result = binarySearch(sortedArray, "CCCC");
 
