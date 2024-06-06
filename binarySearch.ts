@@ -3,7 +3,7 @@ function binarySearch<T extends { name: string }>(list: T[], nameToSearch: T["na
     let lowBorder = 0;
     let highBorder = list.length - 1;
     while (lowBorder <= highBorder) {
-        let middleElement = lowBorder + highBorder / 2;
+        let middleElement = Math.round(lowBorder + highBorder / 2);
         let guess = list[middleElement];
         if (guess.name === nameToSearch) {
             return guess;
@@ -14,7 +14,7 @@ function binarySearch<T extends { name: string }>(list: T[], nameToSearch: T["na
     return null;
 }
 
-const exampleArray = [{ name: "AAAA", id: 1 }, { name: "BBBB", id: 8 }, { name: "MMMM", id: 9 }, { name: "YYYY", id: 10 }, { name: "CCCC", id: 3 }];
+const exampleArray = [{ name: "AAAA", id: 1 }, { name: "BBBB", id: 8 }, { name: "MMMM", id: 9 }, { name: "YYYY", id: 10 }, { name: "CCCC", id: 3 }, { name: "NNNN", id: 6 }];
 
 function sortByName<T extends { name: string }>(a: T, b: T) {
     return a.name > b.name ? 1 : -1
@@ -22,6 +22,6 @@ function sortByName<T extends { name: string }>(a: T, b: T) {
 
 const sortedArray = exampleArray.sort(sortByName);
 
-const result = binarySearch(sortedArray, "CCCC");
+const result = binarySearch(sortedArray, "BBBB");
 
 console.log('check', JSON.stringify({ sortedArray, result }, null, 2));
