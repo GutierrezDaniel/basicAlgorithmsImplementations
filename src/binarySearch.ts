@@ -22,6 +22,6 @@ function sortByName<T extends { name: string }>(a: T, b: T) {
 
 const sortedArray = exampleArray.sort(sortByName);
 
-const result = binarySearch(sortedArray, "BBBB");
+const binarySearchResult = binarySearch(sortedArray, "BBBB");
 
 console.log('check', JSON.stringify({ sortedArray, result }, null, 2));

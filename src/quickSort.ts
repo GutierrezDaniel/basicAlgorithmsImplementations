@@ -1,5 +1,5 @@
 
-const quickSort = (valuesToSort: number[] = []) => {
+const quickSort = (valuesToSort: number[] = []): number[] => {
     if (valuesToSort.length <= 1) return valuesToSort
 
     const [pivot, ...restOfValues] = valuesToSort;
@@ -16,6 +16,6 @@ const quickSort = (valuesToSort: number[] = []) => {
 }
 
 
-const result = quickSort([27, 3, 5, 7, 1, 56, 4, 23, 8, 9, 9, 10]);
+const quickSortResult = quickSort([27, 3, 5, 7, 1, 56, 4, 23, 8, 9, 9, 10]);
 
 console.log(result);

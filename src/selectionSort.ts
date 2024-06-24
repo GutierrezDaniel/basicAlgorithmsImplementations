@@ -19,7 +19,7 @@ function selectionSort<T>(unorderedArray: T[] = [], orderBy: OnlyNumberPropertie
 
     let temporalArray = deepClone(unorderedArray);
 
-    function findSmallest(inputArray, keyToCompare) {
+    function findSmallest<T>(inputArray: T[], keyToCompare: keyof T): [T, number] {
         let smallest = inputArray[0];
         let smallestIndex = 0;
         inputArray.forEach((element, index) => {
