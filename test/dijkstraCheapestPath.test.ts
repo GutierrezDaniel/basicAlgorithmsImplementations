@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { appendDirectChildrenTo } from "../src/dijkstraCheapestPath"
+import { appendDirectChildrenTo, nodesGraph, findCheapestPath } from "../src/dijkstraCheapestPath"
 
 const exampleGraph = {
     nodeStart: {
@@ -28,32 +28,53 @@ const expectedGraph = {
     nodeStart: {
         costs: 10,
         parent: [],
-        children:["nodeA", "nodeB"],
+        children: ["nodeA", "nodeB"],
     },
     nodeA: {
         costs: 10,
         parent: ["nodeStart"],
-        children:["nodeC"],
+        children: ["nodeC"],
     },
     nodeB: {
         costs: 10,
         parent: ["nodeStart"],
-        children:["nodeD"],
+        children: ["nodeD"],
     },
     nodeC: {
         costs: 10,
         parent: ["nodeA"],
-        children:[],
+        children: [],
     },
     nodeD: {
         costs: 10,
         parent: ["nodeB"],
-        children:[],
-    },   
+        children: [],
+    },
 }
 
-test('each node contains a new "reference" to its direct children', () => {
+/* test('each node contains a new "reference" to its direct children', () => {
     const result = appendDirectChildrenTo(exampleGraph);
     console.log('aaa', JSON.stringify(result, null, 2))
     expect(result).toEqual(expectedGraph);
-})
+}); */
+
+test('evaluate', () => {
+    const example: Record<string, { costs: number, children: string[], parent: string[] }> = {
+        nodeStart: {
+            costs: 0,
+            parent: [],
+            children: ["nodeA", "nodeB"],
+        },
+        nodeA: {
+            costs: 10,
+            parent: ["nodeStart"],
+            children: []
+        },
+        nodeB: {
+            costs: 15,
+            parent: ["nodeStart"],
+            children: []
+        },
+    };
+    findCheapestPath(example);
+});

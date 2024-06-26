@@ -1,7 +1,7 @@
 
 type NodesGraph = Record<string, NodeValue>
 type NodeValue = { costs: number, parent: Array<keyof NodesGraph>, children?: Array<keyof NodesGraph> }
-const nodesGraph: NodesGraph = {
+export const nodesGraph: NodesGraph = {
     nodeStart: {
         costs: 0,
         parent: []
@@ -72,6 +72,37 @@ export function appendDirectChildrenTo(weightedGraph: NodesGraph) {
     return clonedGraph;
 }
 
+export function pickNearestChildren(
+    children: string[],
+    parentCost: number,
+    getNodeCost: (nodeName: keyof NodesGraph) => number): [string, number] | [] {
+
+    if (!children.length) return []
+    const pickCheapestNode = (previusNode: [string, number], currentName: keyof NodesGraph, indx: number) => {
+        const [node, cost] = previusNode;
+        const retorna: [string, number] = [node + indx, cost + indx || 0];
+        console.log('first', JSON.stringify({ retorna, previusNode, type: typeof previusNode }, null, 2));
+        return retorna;
+    }
+    return children.reduce(pickCheapestNode, ['aa', Infinity])
+}
+
+export const getNodeCost = (graphWithSubNodes: NodesGraph) => (nodeToFind: keyof NodesGraph) => (graphWithSubNodes[nodeToFind].costs)
+
+export function findCheapestPath(graphWithSubNodes: NodesGraph) {
+    const getNodeCostCurried = getNodeCost(graphWithSubNodes);
+    let [[startName, startValue], ...arrayOfNodes]: [keyof NodesGraph, NodeValue][] = Object.entries(graphWithSubNodes) || [];
+    const cost = { [startName]: startValue.costs };
+    const processedNodes = [];
+    while (arrayOfNodes.length) {
+        const [nodeName, { costs, parent, children = [] }]: [keyof NodesGraph, NodeValue] = arrayOfNodes.shift();
+        const nearestNode = pickNearestChildren(children, costs, getNodeCostCurried)
+    }
+}
+
 function dijkstraCheapestPath(weightedGraph: NodesGraph) {
     const graphWithSubNodes = appendDirectChildrenTo(weightedGraph);
+    findCheapestPath(graphWithSubNodes);
 }
+
+dijkstraCheapestPath(nodesGraph);
