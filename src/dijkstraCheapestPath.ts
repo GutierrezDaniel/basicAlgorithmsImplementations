@@ -76,18 +76,18 @@ export function appendDirectChildrenTo(weightedGraph: NodesGraph) {
 function createBaseCosts(graphWithSubNodes: NodesGraph) {
     const { children = [] } = graphWithSubNodes["nodeStart"];
     const arrayOfNodes = Object.entries(graphWithSubNodes) || [];
-    return {
-        ...(arrayOfNodes.length ? children.map(nodeName => { nodeName: Infinity }) : []),
-        ...(children.length ? children.map(nodeName => { nodeName: graphWithSubNodes["nodeStart"].costs }) : {}),
-        nodeStart: 0,
-    }
+    return Object.assign({},
+        ...arrayOfNodes.map(([nodeName]) => ({ [nodeName]: Infinity })),
+        ...children.map(nodeName => ({ [nodeName]: graphWithSubNodes[nodeName].costs })),
+        { nodeStart: 0 }
+    );    
 }
 
 export function findCheapestPath(graphWithSubNodes: NodesGraph) {
     const getNodeCostCurried = getNodeCost(graphWithSubNodes);
     const costs = createBaseCosts(graphWithSubNodes);
     const parents = {};
-    console.log('aaa', JSON.stringify(costs, null, 2))
+    //console.log('aaa', JSON.stringify(costs, null, 2))
 }
 
 function dijkstraCheapestPath(weightedGraph: NodesGraph) {
