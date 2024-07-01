@@ -80,19 +80,59 @@ function createBaseCosts(graphWithSubNodes: NodesGraph) {
         ...arrayOfNodes.map(([nodeName]) => ({ [nodeName]: Infinity })),
         ...children.map(nodeName => ({ [nodeName]: graphWithSubNodes[nodeName].costs })),
         { nodeStart: 0 }
-    );    
+    );
+};
+
+function createBaseParents(graphWithSubNodes: NodesGraph) {
+    const { children = [] } = graphWithSubNodes["nodeStart"];
+    return Object.assign({},
+        ...(children.map(nodeName => ({ [nodeName]: "nodeStart" })))
+    );
+}
+
+export function findCheapestNode(
+    costs: Record<keyof NodesGraph, number>,
+    processed: Array<keyof NodesGraph>) {
+
+    let lowestCost = Infinity;
+    let lowestCostNode = 'nodeEnd';
+    const arrayOfNodes = Object.entries(costs);
+    for (let nodeIndex in arrayOfNodes) {
+        const [nodeName, nodeCost] = arrayOfNodes[nodeIndex];
+        if (nodeCost < lowestCost && !processed.includes(nodeName)) {
+            lowestCost = nodeCost;
+            lowestCostNode = nodeName;
+        }
+    }
+    return lowestCostNode;
 }
 
 export function findCheapestPath(graphWithSubNodes: NodesGraph) {
     const getNodeCostCurried = getNodeCost(graphWithSubNodes);
     const costs = createBaseCosts(graphWithSubNodes);
-    const parents = {};
-    //console.log('aaa', JSON.stringify(costs, null, 2))
+    const parents = createBaseParents(graphWithSubNodes);
+    const processed: Array<keyof NodesGraph> = [];
+    let currentNode = findCheapestNode(costs, processed);
+    while (currentNode !== "nodeEnd") {
+        const cost = costs[currentNode];
+        const { children = [] } = graphWithSubNodes[currentNode];
+        children.forEach(nodeName => {
+            const newCost = cost + getNodeCostCurried(nodeName);
+            if (costs[nodeName] > newCost) {
+                costs[nodeName] = newCost;
+                parents[nodeName] = currentNode;
+            }
+        });
+        processed.push(currentNode);
+        currentNode = findCheapestNode(costs, processed);
+    }
+    return [parents, costs]
 }
 
-function dijkstraCheapestPath(weightedGraph: NodesGraph) {
+export function dijkstraCheapestPath(weightedGraph: NodesGraph) {
     const graphWithSubNodes = appendDirectChildrenTo(weightedGraph);
-    findCheapestPath(graphWithSubNodes);
+    const parentsAndCosts = findCheapestPath(graphWithSubNodes);
+    return parentsAndCosts;
 }
 
 dijkstraCheapestPath(nodesGraph);

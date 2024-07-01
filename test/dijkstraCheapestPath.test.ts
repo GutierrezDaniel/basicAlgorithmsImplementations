@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { appendDirectChildrenTo, nodesGraph, findCheapestPath } from "../src/dijkstraCheapestPath"
+import { appendDirectChildrenTo, nodesGraph, findCheapestPath, findCheapestNode, dijkstraCheapestPath } from "../src/dijkstraCheapestPath"
 
 const exampleGraph = {
     nodeStart: {
@@ -52,29 +52,70 @@ const expectedGraph = {
     },
 }
 
-/* test('each node contains a new "reference" to its direct children', () => {
+test('each node contains a new "reference" to its direct children', () => {
     const result = appendDirectChildrenTo(exampleGraph);
-    console.log('aaa', JSON.stringify(result, null, 2))
     expect(result).toEqual(expectedGraph);
-}); */
+});
 
-test('evaluate', () => {
-    const example: Record<string, { costs: number, children: string[], parent: string[] }> = {
+test('check findCheapestNode()', () => {
+    const inputNode = { "nodeStart": 0, "nodeA": 10, "nodeB": 5 }
+    const processed = [];
+    const result = findCheapestNode(inputNode, processed);
+    expect(result).toEqual("nodeStart");
+});
+test('check findCheapestNode() with processed node', () => {
+    const inputNode = { "nodeStart": 0, "nodeA": 10, "nodeB": 5 }
+    const processed = ["nodeStart"];
+    const result = findCheapestNode(inputNode, processed);
+    expect(result).toEqual("nodeB");
+});
+
+test('check dijkstraCheapestPath()', () => {
+    const example: Record<string, { costs: number, parent: string[] }> = {
         nodeStart: {
             costs: 0,
             parent: [],
-            children: ["nodeA", "nodeB"],
         },
         nodeA: {
             costs: 10,
             parent: ["nodeStart"],
-            children: []
         },
         nodeB: {
             costs: 15,
             parent: ["nodeStart"],
-            children: []
+        },
+        nodeC: {
+            costs: 5,
+            parent: ["nodeB"]
+        },
+        nodeD: {
+            costs: 15,
+            parent: ["nodeA"]
+        },
+        nodeE: {
+            costs: 25,
+            parent: ["nodeA"]
+        },
+        nodeF: {
+            costs: 2,
+            parent: ["nodeD"]
+        },
+        nodeG: {
+            costs: 10,
+            parent: ["nodeC"]
+        },
+        nodeEnd: {
+            costs: 10,
+            parent: ["nodeG", "nodeF"]
         },
     };
-    findCheapestPath(example);
+    //                   (nodeA: 10) -> (nodeD: 15) ->
+    //                                  (nodeE: 25)    (nodeF: 2) ->  costs: 27  it should choose this path
+    // (nodeStart: 0) ->                                               (nodeEnd)
+    //                   (nodeB: 15) -> (nodeC: 5) ->  (nodeG: 10) ->  costs: 30
+    //
+    //
+    const [parents, costs] = dijkstraCheapestPath(example);    
+    const result = [parents['nodeEnd'], costs[parents['nodeEnd']]];
+    expect(result).toEqual(["nodeF", 27]);
 });
