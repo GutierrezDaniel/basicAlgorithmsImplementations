@@ -53,6 +53,7 @@ export const nodesGraph: NodesGraph = {
 //              --> (nodeH: 10) --> (nodeI:15) --> (nodeEnd: 0)  
 
 const graphClone = (objectToClone: NodesGraph) => JSON.parse(JSON.stringify(objectToClone));
+export const getNodeCost = (graphWithSubNodes: NodesGraph) => (nodeToFind: keyof NodesGraph) => (graphWithSubNodes[nodeToFind].costs)
 
 export function appendDirectChildrenTo(weightedGraph: NodesGraph) {
     const clonedGraph = graphClone(weightedGraph);
@@ -72,32 +73,21 @@ export function appendDirectChildrenTo(weightedGraph: NodesGraph) {
     return clonedGraph;
 }
 
-export function pickNearestChildren(
-    children: string[],
-    parentCost: number,
-    getNodeCost: (nodeName: keyof NodesGraph) => number): [string, number] | [] {
-
-    if (!children.length) return []
-    const pickCheapestNode = (previusNode: [string, number], currentName: keyof NodesGraph, indx: number) => {
-        const [node, cost] = previusNode;
-        const retorna: [string, number] = [node + indx, cost + indx || 0];
-        console.log('first', JSON.stringify({ retorna, previusNode, type: typeof previusNode }, null, 2));
-        return retorna;
+function createBaseCosts(graphWithSubNodes: NodesGraph) {
+    const { children = [] } = graphWithSubNodes["nodeStart"];
+    const arrayOfNodes = Object.entries(graphWithSubNodes) || [];
+    return {
+        ...(arrayOfNodes.length ? children.map(nodeName => { nodeName: Infinity }) : []),
+        ...(children.length ? children.map(nodeName => { nodeName: graphWithSubNodes["nodeStart"].costs }) : {}),
+        nodeStart: 0,
     }
-    return children.reduce(pickCheapestNode, ['aa', Infinity])
 }
-
-export const getNodeCost = (graphWithSubNodes: NodesGraph) => (nodeToFind: keyof NodesGraph) => (graphWithSubNodes[nodeToFind].costs)
 
 export function findCheapestPath(graphWithSubNodes: NodesGraph) {
     const getNodeCostCurried = getNodeCost(graphWithSubNodes);
-    let [[startName, startValue], ...arrayOfNodes]: [keyof NodesGraph, NodeValue][] = Object.entries(graphWithSubNodes) || [];
-    const cost = { [startName]: startValue.costs };
-    const processedNodes = [];
-    while (arrayOfNodes.length) {
-        const [nodeName, { costs, parent, children = [] }]: [keyof NodesGraph, NodeValue] = arrayOfNodes.shift();
-        const nearestNode = pickNearestChildren(children, costs, getNodeCostCurried)
-    }
+    const costs = createBaseCosts(graphWithSubNodes);
+    const parents = {};
+    console.log('aaa', JSON.stringify(costs, null, 2))
 }
 
 function dijkstraCheapestPath(weightedGraph: NodesGraph) {
